@@ -13,40 +13,13 @@
       <section>
         <h2>Resep Terbaru</h2>
         <div class="section-content">
-          <nuxt-link to="/recipe/MieAceh" class="recipe-card">
-            <img src="/assets/mie aceh.jpg" alt="Mie Aceh">
-            <h3>Mie Aceh</h3>
-            <p>Mie Aceh adalah makanan yang berasal dari Aceh.</p>
-          </nuxt-link>
-          
-          <nuxt-link to="/recipe/ketoprak" class="recipe-card">
-            <img src="/assets/ketoprak.jpg" alt="Ketoprak">
-            <h3>Ketoprak</h3>
-            <p>Ketoprak adalah makanan dari Jawa Barat.</p>
-          </nuxt-link>
-          <nuxt-link to="/recipe/ayam-betutu" class="recipe-card">
-            <img src="/assets/ayam betutu.jpeg" alt="Ayam Betutu">
-            <h3>Ayam Betutu</h3>
-            <p>Ayam betutu adalah makanan khas Bali yang bercita rasa tinggi.</p>
-          </nuxt-link>
-        </div>
-        <h2>Resep Populer</h2>
-        <div class="section-content">
-          <nuxt-link to="/recipe/bika-ambon" class="recipe-card">
-            <img src="/assets/bika ambon.jpg" alt="Bika Ambon">
-            <h3>Bika Ambon</h3>
-            <p>Bika Ambon adalah makanan dari Medan.</p>
-          </nuxt-link>
-          <nuxt-link to="/recipe/gudeg" class="recipe-card">
-            <img src="/assets/gudeg.jpeg" alt="Gudeg">
-            <h3>Gudeg</h3>
-            <p>Gudeg adalah makanan dari Yogyakarta.</p>
-          </nuxt-link>
-          <nuxt-link to="/recipe/kerak-telur" class="recipe-card">
-            <img src="/assets/kerak telur.jpg" alt="Kerak Telur">
-            <h3>Kerak Telur</h3>
-            <p>Kerak Telur adalah makanan dari Betawi.</p>
-          </nuxt-link>
+          <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
+            <nuxt-link :to="`/recipe/${recipe.id}`">
+              <img :src="recipe.imageUrl" :alt="recipe.name">
+              <h3>{{ recipe.name }}</h3>
+              <p>{{ recipe.asal }}</p>
+            </nuxt-link>
+          </div>
         </div>
       </section>
     </main>
@@ -62,12 +35,12 @@ export default {
   },
   async mounted() {
     try {
-      // Ambil data resep dari Firestore, urutkan berdasarkan createdAt descending
+      // Fetch recipes from Firestore, ordered by createdAt descending
       const querySnapshot = await this.$fire.firestore.collection('recipes')
                                     .orderBy('createdAt', 'desc')
                                     .get();
 
-      // Simpan data resep ke dalam array recipes
+      // Save recipes data to the recipes array
       querySnapshot.forEach(doc => {
         this.recipes.push({
           id: doc.id,
@@ -77,12 +50,16 @@ export default {
 
     } catch (error) {
       console.error("Error fetching recipes: ", error);
-      // Handle error, tampilkan pesan error, dll.
+      // Handle error, display error message, etc.
+    }
+  },
+  methods: {
+    addRecipe(newRecipe) {
+      this.recipes.unshift(newRecipe);
     }
   }
 };
 </script>
-
 
 <style>
 body {

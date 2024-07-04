@@ -65,8 +65,25 @@ export default {
 
         console.log("Recipe added successfully!");
 
-        // Redirect to the main page
-        this.$router.push('/');
+        // Emit an event to notify the parent component
+        this.$emit('recipeAdded', {
+          id: recipeId,
+          name: this.name,
+          asal: this.asal,
+          imageUrl: this.imageUrl,
+          kategori: this.kategori,
+          ingredients: ingredientsArray,
+          steps: stepsArray,
+          createdAt: new Date()
+        });
+
+        // Clear form fields
+        this.name = '';
+        this.asal = '';
+        this.imageUrl = '';
+        this.kategori = '';
+        this.ingredients = '';
+        this.steps = '';
 
       } catch (error) {
         console.error("Error adding recipe: ", error);
