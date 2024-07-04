@@ -13,13 +13,40 @@
       <section>
         <h2>Resep Terbaru</h2>
         <div class="section-content">
-          <div v-for="recipe in recipes" :key="recipe.id" class="recipe-card">
-            <nuxt-link :to="`/recipe/${recipe.id}`">
-              <img :src="recipe.imageUrl" :alt="recipe.name">
-              <h3>{{ recipe.name }}</h3>
-              <p>{{ recipe.asal }}</p>
-            </nuxt-link>
-          </div>
+          <nuxt-link to="/recipe/MieAceh" class="recipe-card">
+            <img src="/assets/mie aceh.jpg" alt="Mie Aceh">
+            <h3>Mie Aceh</h3>
+            <p>Mie Aceh adalah makanan yang berasal dari Aceh.</p>
+          </nuxt-link>
+          
+          <nuxt-link to="/recipe/ketoprak" class="recipe-card">
+            <img src="/assets/ketoprak.jpg" alt="Ketoprak">
+            <h3>Ketoprak</h3>
+            <p>Ketoprak adalah makanan dari Jawa Barat.</p>
+          </nuxt-link>
+          <nuxt-link to="/recipe/ayam-betutu" class="recipe-card">
+            <img src="/assets/ayam betutu.jpeg" alt="Ayam Betutu">
+            <h3>Ayam Betutu</h3>
+            <p>Ayam betutu adalah makanan khas Bali yang bercita rasa tinggi.</p>
+          </nuxt-link>
+        </div>
+        <h2>Resep Populer</h2>
+        <div class="section-content">
+          <nuxt-link to="/recipe/bika-ambon" class="recipe-card">
+            <img src="/assets/bika ambon.jpg" alt="Bika Ambon">
+            <h3>Bika Ambon</h3>
+            <p>Bika Ambon adalah makanan dari Medan.</p>
+          </nuxt-link>
+          <nuxt-link to="/recipe/gudeg" class="recipe-card">
+            <img src="/assets/gudeg.jpeg" alt="Gudeg">
+            <h3>Gudeg</h3>
+            <p>Gudeg adalah makanan dari Yogyakarta.</p>
+          </nuxt-link>
+          <nuxt-link to="/recipe/kerak-telur" class="recipe-card">
+            <img src="/assets/kerak telur.jpg" alt="Kerak Telur">
+            <h3>Kerak Telur</h3>
+            <p>Kerak Telur adalah makanan dari Betawi.</p>
+          </nuxt-link>
         </div>
       </section>
     </main>
@@ -27,8 +54,6 @@
 </template>
 
 <script>
-import { EventBus } from '~/plugins/event-bus';
-
 export default {
   data() {
     return {
@@ -37,10 +62,12 @@ export default {
   },
   async mounted() {
     try {
+      // Ambil data resep dari Firestore, urutkan berdasarkan createdAt descending
       const querySnapshot = await this.$fire.firestore.collection('recipes')
                                     .orderBy('createdAt', 'desc')
                                     .get();
 
+      // Simpan data resep ke dalam array recipes
       querySnapshot.forEach(doc => {
         this.recipes.push({
           id: doc.id,
@@ -48,22 +75,14 @@ export default {
         });
       });
 
-      EventBus.$on('recipeAdded', this.addRecipe);
-
     } catch (error) {
       console.error("Error fetching recipes: ", error);
+      // Handle error, tampilkan pesan error, dll.
     }
-  },
-  methods: {
-    addRecipe(newRecipe) {
-      this.recipes.unshift(newRecipe);
-    }
-  },
-  beforeDestroy() {
-    EventBus.$off('recipeAdded', this.addRecipe);
   }
 };
 </script>
+
 
 <style>
 body {
@@ -96,7 +115,7 @@ nav a {
   color: #ffffff;
   background-color: #cc5200;
   padding: 10px 20px;
-  text-decoration: none;
+  text-decoration: none; /* Remove underline */
   border-radius: 20px;
   transition: background-color 0.3s, transform 0.3s;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -140,7 +159,7 @@ h2 {
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   width: 300px;
-  text-decoration: none;
+  text-decoration: none; /* Ensure no underline */
 }
 
 .recipe-card img {
@@ -153,12 +172,14 @@ h2 {
   font-size: 1.5em;
   color: #333;
   margin: 10px 0;
+  text-decoration: none; /* Remove underline */
 }
 
 .recipe-card p {
   font-size: 1em;
   color: #777;
   margin: 0 10px 10px;
+  text-decoration: none; /* Remove underline */
 }
 
 .recipe-card:hover {
