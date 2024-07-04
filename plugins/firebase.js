@@ -2,6 +2,7 @@
 // plugins/firebase.js
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/storage'
 
 const firebaseConfig = {
     apiKey: "AIzaSyD1mCqueRl8zDiaYwySrDqID7Cn8xNp3mE",
