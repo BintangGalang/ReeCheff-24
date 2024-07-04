@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { EventBus } from '~/plugins/event-bus';
+
 export default {
   data() {
     return {
@@ -35,12 +37,10 @@ export default {
   },
   async mounted() {
     try {
-      // Fetch recipes from Firestore, ordered by createdAt descending
       const querySnapshot = await this.$fire.firestore.collection('recipes')
                                     .orderBy('createdAt', 'desc')
                                     .get();
 
-      // Save recipes data to the recipes array
       querySnapshot.forEach(doc => {
         this.recipes.push({
           id: doc.id,
@@ -48,15 +48,19 @@ export default {
         });
       });
 
+      EventBus.$on('recipeAdded', this.addRecipe);
+
     } catch (error) {
       console.error("Error fetching recipes: ", error);
-      // Handle error, display error message, etc.
     }
   },
   methods: {
     addRecipe(newRecipe) {
       this.recipes.unshift(newRecipe);
     }
+  },
+  beforeDestroy() {
+    EventBus.$off('recipeAdded', this.addRecipe);
   }
 };
 </script>
@@ -92,7 +96,7 @@ nav a {
   color: #ffffff;
   background-color: #cc5200;
   padding: 10px 20px;
-  text-decoration: none; /* Remove underline */
+  text-decoration: none;
   border-radius: 20px;
   transition: background-color 0.3s, transform 0.3s;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -136,7 +140,7 @@ h2 {
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   width: 300px;
-  text-decoration: none; /* Ensure no underline */
+  text-decoration: none;
 }
 
 .recipe-card img {
@@ -149,14 +153,12 @@ h2 {
   font-size: 1.5em;
   color: #333;
   margin: 10px 0;
-  text-decoration: none; /* Remove underline */
 }
 
 .recipe-card p {
   font-size: 1em;
   color: #777;
   margin: 0 10px 10px;
-  text-decoration: none; /* Remove underline */
 }
 
 .recipe-card:hover {

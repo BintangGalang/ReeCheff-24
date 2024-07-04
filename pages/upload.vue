@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { EventBus } from '~/plugins/event-bus';
+
 export default {
   data() {
     return {
@@ -40,11 +42,9 @@ export default {
   methods: {
     async submitRecipe() {
       try {
-        // Prepare ingredients and steps as arrays
         const ingredientsArray = this.ingredients.split(',').map(item => item.trim());
         const stepsArray = this.steps.split(',').map(item => item.trim());
 
-        // Add recipe to Firestore
         const docRef = await this.$fire.firestore.collection('recipes').add({
           name: this.name,
           asal: this.asal,
@@ -55,18 +55,15 @@ export default {
           createdAt: this.$fireModule.firestore.FieldValue.serverTimestamp()
         });
 
-        // Get the ID of the newly created document
         const recipeId = docRef.id;
 
-        // Add recipeId field to the document
         await docRef.update({
           recipeId: recipeId
         });
 
         console.log("Recipe added successfully!");
 
-        // Emit an event to notify the parent component
-        this.$emit('recipeAdded', {
+        EventBus.$emit('recipeAdded', {
           id: recipeId,
           name: this.name,
           asal: this.asal,
@@ -77,7 +74,6 @@ export default {
           createdAt: new Date()
         });
 
-        // Clear form fields
         this.name = '';
         this.asal = '';
         this.imageUrl = '';
@@ -85,9 +81,9 @@ export default {
         this.ingredients = '';
         this.steps = '';
 
+        this.$router.push('/');
       } catch (error) {
         console.error("Error adding recipe: ", error);
-        // Handle error, display error message, etc.
       }
     }
   }

@@ -9,10 +9,6 @@ export default defineNuxtConfig({
     '~/plugins/firebase.js',
   ],
   
-  plugins: [
-    '~/plugins/event-bus.js'
-  ],
-
   router: {
     extendRoutes(routes, resolve) {
       routes.push(
