@@ -1,5 +1,4 @@
-
-// plugins/firebase.js
+import { defineNuxtPlugin } from '#app'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
