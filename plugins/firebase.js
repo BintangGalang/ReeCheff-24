@@ -4,15 +4,23 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBIuPiqHUi2Makb9yVqBK2NK3zDeZZUpiQ",
-    authDomain: "reecfeff.firebaseapp.com",
-    projectId: "reecfeff",
-    storageBucket: "reecfeff.appspot.com",
-    messagingSenderId: "687779412300",
-    appId: "1:687779412300:web:8b4545df77facae2f637e9",
-    measurementId: "G-66EBPC65XN"
+    apiKey: "AIzaSyD1mCqueRl8zDiaYwySrDqID7Cn8xNp3mE",
+    authDomain: "reecheff-ke13.firebaseapp.com",
+    projectId: "reecheff-ke13",
+    storageBucket: "reecheff-ke13.appspot.com",
+    messagingSenderId: "1095521271855",
+    appId: "1:1095521271855:web:e309ba213ed2a9d8de06da"
 }
 
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig)
+  }
+
+  const firestore = firebase.firestore()
+  const storage = firebase.storage()
+
+  nuxtApp.provide('firestore', firestore)
+  nuxtApp.provide('storage', storage)
 
 
 
