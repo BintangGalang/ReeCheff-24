@@ -2,20 +2,23 @@
   <div class="container">
     <h1>Unggah Resep Baru</h1>
     <form @submit.prevent="submitRecipe">
-      <label for="title">Judul:</label>
-      <input type="text" id="title" v-model="title" required>
+      <label for="name">Nama Resep:</label>
+      <input type="text" id="name" v-model="name" required>
 
-      <label for="description">Deskripsi:</label>
-      <textarea id="description" v-model="description" required></textarea>
+      <label for="asal">Asal:</label>
+      <input type="text" id="asal" v-model="asal" required>
 
-      <label for="imageURL">URL Gambar:</label>
-      <input type="text" id="imageURL" v-model="imageURL" required>
+      <label for="imageUrl">URL Gambar:</label>
+      <input type="text" id="imageUrl" v-model="imageUrl" required>
 
-      <label for="origin">Asal:</label>
-      <input type="text" id="origin" v-model="origin" required>
+      <label for="kategori">Kategori:</label>
+      <input type="text" id="kategori" v-model="kategori" required>
 
-      <label for="category">Kategori:</label>
-      <input type="text" id="category" v-model="category" required>
+      <label for="ingredients">Bahan-bahan (pisahkan dengan koma):</label>
+      <input type="text" id="ingredients" v-model="ingredients" required>
+
+      <label for="steps">Langkah-langkah (pisahkan dengan koma):</label>
+      <textarea id="steps" v-model="steps" required></textarea>
 
       <button type="submit">Unggah Resep</button>
     </form>
@@ -26,48 +29,53 @@
 export default {
   data() {
     return {
-      title: '',
-      description: '',
-      imageURL: '',
-      origin: '',
-      category: ''
+      name: '',
+      asal: '',
+      imageUrl: '',
+      kategori: '',
+      ingredients: '',
+      steps: ''
     };
   },
   methods: {
     async submitRecipe() {
       try {
-        // Simpan resep ke Firestore
+        // Prepare ingredients and steps as arrays
+        const ingredientsArray = this.ingredients.split(',').map(item => item.trim());
+        const stepsArray = this.steps.split(',').map(item => item.trim());
+
+        // Add recipe to Firestore
         const docRef = await this.$fire.firestore.collection('recipes').add({
-          title: this.title,
-          description: this.description,
-          imageURL: this.imageURL,
-          origin: this.origin,
-          category: this.category,
+          name: this.name,
+          asal: this.asal,
+          imageUrl: this.imageUrl,
+          kategori: this.kategori,
+          ingredients: ingredientsArray,
+          steps: stepsArray,
           createdAt: this.$fireModule.firestore.FieldValue.serverTimestamp()
         });
 
-        // Dapatkan ID dari dokumen yang baru dibuat
+        // Get the ID of the newly created document
         const recipeId = docRef.id;
 
-        // Tambahkan ID resep ke field 'recipeId' di Firestore
+        // Add recipeId field to the document
         await docRef.update({
           recipeId: recipeId
         });
 
         console.log("Recipe added successfully!");
 
-        // Redirect ke halaman utama
+        // Redirect to the main page
         this.$router.push('/');
 
       } catch (error) {
         console.error("Error adding recipe: ", error);
-        // Handle error, tampilkan pesan error, dll.
+        // Handle error, display error message, etc.
       }
     }
   }
 };
 </script>
-
 
 <style scoped>
 .container {
